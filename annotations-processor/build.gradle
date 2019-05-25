@@ -1,0 +1,31 @@
+plugins {	
+	id 'java-library'
+}
+
+group = 'swallow3.mybatisplus'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+compileJava.options.encoding = 'UTF-8'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/java' // 指定源码目录
+        }
+        resources {
+            srcDir 'src/resources' //资源目录
+        }
+    }
+}
+
+
+dependencies {
+    compile project(':core-framework')
+    compile 'com.google.auto.service:auto-service:1.0-rc5' //自动注册注解处理器
+    compile 'com.squareup:javapoet:1.11.1' //javapoet代码生成框架    
+}
+
+
+

@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - DemoApplication",
+            "request": "launch",
+            "mainClass": "swallow3.sample.test.DemoApplication",
+            "projectName": "testswallow"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Attach) - Remote",
+            "request": "attach",
+            "hostName": "127.0.0.1",
+            "port": 8001
+        }
+    ]
+}

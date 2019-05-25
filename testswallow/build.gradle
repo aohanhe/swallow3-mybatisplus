@@ -1,0 +1,73 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.5.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'swallow3.sample'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile project(":core-framework")
+	 
+	implementation 'com.baomidou:mybatis-plus-boot-starter:3.1.1'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor project(":core-framework")
+	annotationProcessor project(":annotations-processor")
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+// 源代码目录设置
+sourceSets {
+        main{
+            java {
+                srcDirs "src/main/java"
+				srcDirs "src/swallowgen/java"            
+            }
+        }
+ }
+
+ext{
+	outdir="swallowgen"
+}
+
+// 编译参数设置
+compileJava.options.encoding = 'UTF-8'
+compileJava.options.compilerArgs<< "-AgenCodeDir=$projectDir/src/$outdir/java"
+compileJava.options.compilerArgs<< "-AcodeDir=$projectDir/src/main/java"
+compileJava.options.compilerArgs<< "-AsqlDir=$projectDir/src/$outdir/sql"
+compileJava.options.compilerArgs<< "-Adebug=true"
+compileJava.options.compilerArgs<< "-AdbType=mysql"
+compileJava.options.compilerArgs<< "-AcreateSql=true"
+
+compileJava {	
+	// 设置 在编译指令后加-PgenCode 进行代码生成
+	doFirst{
+
+		if (project.hasProperty("genCode")) {	
+			// 生成或清队目录原有的数据
+			file(new File(projectDir, "src/$outdir/java")).deleteDir()
+			// 确保辅助文件所在的位置
+			file(new File(projectDir, "src/$outdir/java")).mkdirs()	
+
+			options.compilerArgs << "-AgenCode=true"
+		}
+	}
+}
