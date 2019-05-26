@@ -25,19 +25,41 @@
 	</td>
 </tr>
 <tr>
-	<td>aliasName:  -String- 实使用对应的表使用的别名</td>
+	<td>aliasName:  <strong>String</strong>- 实使用对应的表使用的别名</td>
 </tr>
 <tr>
-	<td rowspan="2">
+	<td rowspan="6">
 		@SwallowField
 	</td>
 	<td>
-		指定字段对应的信息，如果没有设置，使用主表
+		指定字段对应的信息，如果没有设置，使用@TableFiled的配置，@TableFiled也没有设置则使用主表
 	</td>
 </tr>
+	<tr><td>fieldName:  <strong>String</strong>- 对应表的字段名，如果不设置则使用@TableField设置的名称</td></tr>
+	<tr><td>tableAliasName:  <strong>String</strong>- 对应表的别名，如果为空，则使用主表的别名</td></tr>
+	<tr><td>jdbcType: <strong>String</strong>-对应的jdbc类型，主要用于生成健表语句使用</td></tr>
+	<tr><td>length: <strong>String</strong>-表中字段的长度 ，主要用于生成健表语句使用</td></tr>
+	<tr><td>canNull: <strong>String</strong>-表中字段是否允许空,默认为true ，主要用于生成健表语句使用</td></tr>
+
 <tr>
-	<td>fieldName:  -String- 对应表的字段名，如果不设置则使用@TableField设置的名称</td>
+	<td rowspan="6">
+		@SwallowLeftJoin
+	</td>
+	<td>
+		用于配置实对应的左联结表,这个注解可以用于实体的Class级别，也可以用于字段级别。
+		<ul>
+			<li>如果用于Class级别，则可以多次使用，并且要求指定联结的主表。</li>
+			<li>如果使用在字段级别时，要放在主表中关联从表的字段上，这样会自动提取主表以及关联字段的信息。</li>
+		</ul>
+	</td>
 </tr>
+
+<tr><td>fieldName:  <strong>String必填</strong>- 被联结表的字段名</td></tr>
+<tr><td>joinTableName:  <strong>String必填</strong>- 联结表的名称</td></tr>
+<tr><td>joinTableAliasName: <strong>String必填</strong>-联结表的别名</td></tr>
+<tr><td>mainTableName: <strong>String</strong>-主表的名称 如果是使用在字段上时，请省略</td></tr>
+<tr><td>mainTableAliasName: <strong>String</strong>-主表的别名 ，主要用于生成健表语句使用</td></tr>
+
 </table>
 
 ## 使用方法
