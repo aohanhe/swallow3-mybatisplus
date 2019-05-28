@@ -86,7 +86,7 @@ public class Processor extends AbstractProcessor {
             try {
 
                 LoadTableInfoHelper helper = new LoadTableInfoHelper(elPackage, element, this.types,
-                        new MysqlJavatypeToJdbType());
+                        new MysqlJavatypeToJdbType(),config);
                 TableInfo tableInfo = helper.loadFromClassInfo();
 
                 if (this.config.isDebug())

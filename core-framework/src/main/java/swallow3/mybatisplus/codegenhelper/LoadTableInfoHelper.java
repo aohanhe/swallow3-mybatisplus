@@ -32,6 +32,7 @@ public class LoadTableInfoHelper {
     private final TypeMirror typeRawMirror;
     private final Types typesTool;
     private final IJavaTypeToJdbType javaTypeToJdbType;
+    private final Config config;
    
 
     /**
@@ -44,12 +45,13 @@ public class LoadTableInfoHelper {
      * @param javaTypeToJdbType
      */
     public LoadTableInfoHelper(PackageElement packageEl, Element el,  Types typesTool,
-            IJavaTypeToJdbType javaTypeToJdbType) {
+            IJavaTypeToJdbType javaTypeToJdbType,Config config) {
         this.packageEl = packageEl;
         this.el = el;
         this.typeRawMirror = el.asType();
         this.typesTool = typesTool;
         this.javaTypeToJdbType = javaTypeToJdbType;
+        this.config=config;
      
 
     }
@@ -97,11 +99,14 @@ public class LoadTableInfoHelper {
     private void loadTableInfo(TableInfo tableInfo) {
         SwallowEnity meta = el.getAnnotation(SwallowEnity.class);
         String aliasName = meta.aliasName();
+        String tableName=meta.tableName();
 
-        TableName tableNameAnn = el.getAnnotation(TableName.class);
-        Assert.notNull(tableNameAnn, String.format("类%s.%s没有设置SwallowEnity别名也没有设置@TableName",
-         tableInfo.getEntityPacketName(),tableInfo.getEntityName()));
-        String tableName = tableNameAnn.value();
+        if(!StringUtils.hasText(tableName)){
+            TableName tableNameAnn = el.getAnnotation(TableName.class);
+            Assert.notNull(tableNameAnn, String.format("类%s.%s没有设置SwallowEnity别名也没有设置@TableName",
+            tableInfo.getEntityPacketName(),tableInfo.getEntityName()));
+            tableName = tableNameAnn.value();
+        }
 
         if (StringUtils.isEmpty(aliasName)) {
             aliasName = tableName;
@@ -183,7 +188,7 @@ public class LoadTableInfoHelper {
             fieldInfo.setJdbcType(jdbcType);
 
             // 检查是否必须提供长度
-            if(javaTypeToJdbType.isMustLen(jdbcType)&&!fieldInfo.isTransient())  
+            if(javaTypeToJdbType.isMustLen(jdbcType)&&!fieldInfo.isTransient()&&this.config.isCreateSql())  
                 Assert.hasText(len,String.format("字段%s是必需提供长度的%s子段",name, jdbcType));
 
             fieldInfo.setLen(len);
@@ -258,8 +263,8 @@ public class LoadTableInfoHelper {
 
             // 添加所有的属性
             for (Element subEl : element.getEnclosedElements()) {
-                if (subEl.getKind() == ElementKind.FIELD) {
-                    
+                if ((subEl.getKind() == ElementKind.FIELD)&&(!subEl.getModifiers().contains(Modifier.FINAL))
+                    &&(!subEl.getModifiers().contains(Modifier.STATIC))) {                    
                     listFields.add(subEl);
                 }
             }

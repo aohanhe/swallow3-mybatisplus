@@ -21,7 +21,7 @@ public @interface SwallowField {
     /**
      * 对应表的别名，如果为空，则使用主表的别名
      */
-    String tableAliasName() default ""; 
+    String  tableAliasName() default ""; 
     // 对应的jdbc类型  
     String jdbcType() default "";
     // 表中字段的长度 ，如果没有配置生成的代码会指定255

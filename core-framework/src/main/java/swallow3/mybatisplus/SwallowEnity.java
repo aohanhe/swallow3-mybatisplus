@@ -11,5 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SwallowEnity {
+    // 表的名称，如果没有设置，则使用@TableName的名称
+    String tableName() default "";
     String aliasName() default "";
 }

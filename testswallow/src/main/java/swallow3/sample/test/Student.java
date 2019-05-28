@@ -1,5 +1,7 @@
 package swallow3.sample.test;
 
+import java.io.Serializable;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -16,7 +18,10 @@ import swallow3.mybatisplus.SwallowLeftJoin;
 @Data
 @TableName("student")
 @SwallowEnity(aliasName = "student")
-public class Student {    
+public class Student implements Serializable {
+
+    private static final long serialVersionUID = -1102881406832899343L;
+
     @TableField("id")
     @TableId
     private int id;

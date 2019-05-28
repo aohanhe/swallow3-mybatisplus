@@ -31,6 +31,7 @@ public class SwallowService<M extends BaseMapper<T>, T> extends ServiceImpl<M,T>
         }        
     }
 
+    @Transactional
     @Override
     public boolean updateById(T entity) {        
         try {

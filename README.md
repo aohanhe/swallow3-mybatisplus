@@ -17,15 +17,16 @@
 ## 实体注解说明
 <table>
 <tr>
-	<td rowspan="2">
+	<td rowspan="3">
 		@SwallowEnity
 	</td>
 	<td>
-		实体对象，用于指定对应的主表别名,如果为空，则使用mybatisplus的tablename
+		实体对象，用于指定对应的主表别名,如果为空，则使用mybatisplus的@TableName
 	</td>
 </tr>
 <tr>
-	<td>aliasName:  <strong>String</strong>- 实使用对应的表使用的别名</td>
+	<td>aliasName:  <strong>String</strong>- 实体使用对应的表使用的别名</td>
+	<td>tableName:  <strong>String</strong>- 实体使用对应的表使用的名称，如果没有设置使用@TableName的设置</td>
 </tr>
 <tr>
 	<td rowspan="6">
