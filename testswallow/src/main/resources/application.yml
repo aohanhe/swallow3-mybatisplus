@@ -12,6 +12,3 @@ spring:
       max-lifetime: 300000
       maximum-pool-size: 35 
 
-logging:
-  level:
-    root: debug

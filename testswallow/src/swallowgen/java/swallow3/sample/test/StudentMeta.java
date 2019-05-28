@@ -12,6 +12,4 @@ class StudentMeta {
   public static final String classId = "student.class_id";
 
   public static final String className = "classinfo.class_name";
-
-  public static final String myname = "student.myname";
 }

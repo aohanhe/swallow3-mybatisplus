@@ -1,8 +1,10 @@
 package swallow3.sample.test;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +15,7 @@ import swallow3.mybatisplus.SwallowMapper;
 
 @Slf4j
 @SpringBootApplication
-@MapperScan(value = {"swallow3.sample.test"},annotationClass = SwallowMapper.class)
+@MapperScan(value = {"swallow3.sample.test"})
 public class DemoApplication implements CommandLineRunner{
 
 	public static void main(String[] args) {
@@ -25,11 +27,22 @@ public class DemoApplication implements CommandLineRunner{
 		return new PaginationInterceptor();
 	}
 
+	@Autowired
+	private StudentMapper mpp;
 	
+	//@Autowired
+	//private StudentService service;
 
 	@Override
 	public void run(String... args) throws Exception {
-		BaseStudentMapper d;
+		mpp.findAllItem(Wrappers.<Student>query()).forEach(System.out::println);
+
+		//Student st= mpp.selectById(10000001);
+		//System.out.println(st);
+
+		//Student  entity = service.getById(12);
+		//System.out.println(entity);
+
 	}
 
 }

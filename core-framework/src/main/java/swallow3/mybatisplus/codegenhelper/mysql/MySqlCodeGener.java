@@ -138,7 +138,8 @@ public class MySqlCodeGener implements ICodeGener {
         boolean isFirst = true;
         // 添加从表列
         for (TableFieldInfo item : tableInfo.getFields()) {
-            sql.append((isFirst ? "" : ",") + String.format("%s.%s", item.getTableAliasName(), item.getFieldName()));
+            sql.append((isFirst ? "" : ",") + String.format("%s.%s as %s", item.getTableAliasName(), item.getFieldName(),item.getFieldAliasName()));
+            
             isFirst = false;
         }
 
@@ -238,7 +239,9 @@ public class MySqlCodeGener implements ICodeGener {
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(mapperSqlName).addJavadoc(
                 "实体$L.$L对应的基础mybatis的mapper对象,请不要在这里添加代码，以防止下次生成时被覆盖", tableInfo.getEntityPacketName(),
-                tableInfo.getEntityName());
+                tableInfo.getEntityName())
+                .addModifiers(Modifier.PUBLIC)
+                ;
 
         // 查询参数
         ParameterSpec.Builder param = ParameterSpec
@@ -262,7 +265,7 @@ public class MySqlCodeGener implements ICodeGener {
         // 添加返回对象 返回List<T>对象
         methodFindAll.addJavadoc("根据条件查询所有的$L数据", tableInfo.getEntityName()).addModifiers(Modifier.PUBLIC)
                 .returns(ClassName.get(String.class)).addParameter(param.build())
-                .addStatement("return $S+SELECTLIST+$S+FROMLIST+$S", "Select ", " Form ", " ${ew.customSqlSegment}");
+                .addStatement("return $S+SELECTLIST+$S+FROMLIST+$S", "Select ", " From ", " ${ew.customSqlSegment}");
         // 分页返回T对象
         MethodSpec.Builder methodFindAllByPage = MethodSpec.methodBuilder(method_findAllItemByPage);
         methodFindAllByPage.addJavadoc("根据条件查询所有的$L数据", tableInfo.getEntityName()).addModifiers(Modifier.PUBLIC)

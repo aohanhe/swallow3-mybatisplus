@@ -8,15 +8,15 @@ import org.apache.ibatis.annotations.Param;
 
 /**
  * 实体swallow3.sample.test.Student对应的基础mybatis的mapper对象,请不要在这里添加代码，以防止下次生成时被覆盖 */
-class BaseStudentMapperSql {
-  public static final String SELECTLIST = "student.id,student.name,student.class_id,classinfo.ttt,student.myname";
+public class BaseStudentMapperSql {
+  public static final String SELECTLIST = "student.id as id,student.name as name,student.class_id as class_id,classinfo.name as class_name";
 
-  public static final String FROMLIST = "student student left join classInfo classinfo on student.class_id=classinfo.id ";
+  public static final String FROMLIST = "student student left join class_info classinfo on student.class_id=classinfo.id ";
 
   /**
    * 根据条件查询所有的Student数据 */
   public String findAllItem(@Param(Constants.WRAPPER) Wrapper<Student> Wrapper) {
-    return "Select "+SELECTLIST+" Form "+FROMLIST+" ${ew.customSqlSegment}";
+    return "Select "+SELECTLIST+" From "+FROMLIST+" ${ew.customSqlSegment}";
   }
 
   /**

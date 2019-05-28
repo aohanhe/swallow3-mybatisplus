@@ -8,7 +8,7 @@ import lombok.Data;
 import swallow3.mybatisplus.SwallowEnity;
 import swallow3.mybatisplus.SwallowField;
 import swallow3.mybatisplus.SwallowLeftJoin;
-import swallow3.sample.test.genOut.BaseStudent;
+
 
 /**
  * TestEntity
@@ -16,9 +16,7 @@ import swallow3.sample.test.genOut.BaseStudent;
 @Data
 @TableName("student")
 @SwallowEnity(aliasName = "student")
-
-public class Student extends BaseStudent{
-    @SwallowField(tableAliasName ="student",canNull = false)
+public class Student {    
     @TableField("id")
     @TableId
     private int id;
@@ -26,11 +24,11 @@ public class Student extends BaseStudent{
     @SwallowField(length = "30")
     private String name;
 
-    @SwallowLeftJoin(fieldName="id",joinTableName="classInfo",joinTableAliasName="classinfo")    
+    @SwallowLeftJoin(fieldName="id",joinTableName="class_info",joinTableAliasName="classinfo")    
     @TableField("class_id")
     private int classId;
 
-    @SwallowField(fieldName = "ttt",tableAliasName="classinfo")
+    @SwallowField(fieldName = "name",tableAliasName="classinfo")
     @TableField("class_name")    
     private transient String className;     
 }

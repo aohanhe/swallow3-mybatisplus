@@ -27,7 +27,7 @@ import javax.tools.Diagnostic.Kind;
 
 import com.google.auto.service.AutoService;
 
-import swallow3.mybatisplus.codegenhelper.CodeGener;
+
 import swallow3.mybatisplus.codegenhelper.Config;
 import swallow3.mybatisplus.codegenhelper.ConfigHelper;
 import swallow3.mybatisplus.codegenhelper.LoadTableInfoHelper;

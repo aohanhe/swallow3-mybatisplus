@@ -1,7 +1,6 @@
 Create table student 
 (
- id int  auto_increment primary key,
+ id int null auto_increment primary key,
 name varchar(30) null ,
-class_id int null ,
-myname varchar(100) null 
+class_id int null 
 ) engine = InnoDB;
