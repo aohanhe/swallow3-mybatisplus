@@ -3,6 +3,7 @@ package swallow3.sample.test;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.io.Serializable;
 import java.lang.String;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,6 +24,12 @@ public class BaseStudentMapperSql {
    * 根据条件查询所有的Student数据 */
   public String findAllItemByPage(Page<Student> page,
       @Param(Constants.WRAPPER) Wrapper<Student> Wrapper) {
-    return "Select "+SELECTLIST+" Form "+FROMLIST+" ${ew.customSqlSegment}";
+    return "Select "+SELECTLIST+" From "+FROMLIST+" ${ew.customSqlSegment}";
+  }
+
+  /**
+   * 根据ID查询Student数据 */
+  public String findItemById(@Param("id") Serializable id) {
+    return "Select "+SELECTLIST+" From "+FROMLIST+" where student.id=${id}";
   }
 }

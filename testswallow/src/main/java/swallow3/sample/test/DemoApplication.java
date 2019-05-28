@@ -30,18 +30,16 @@ public class DemoApplication implements CommandLineRunner{
 	@Autowired
 	private StudentMapper mpp;
 	
-	//@Autowired
-	//private StudentService service;
+	@Autowired
+	private StudentService service;
 
 	@Override
 	public void run(String... args) throws Exception {
-		mpp.findAllItem(Wrappers.<Student>query()).forEach(System.out::println);
-
-		//Student st= mpp.selectById(10000001);
-		//System.out.println(st);
-
-		//Student  entity = service.getById(12);
-		//System.out.println(entity);
+		
+		//boolean b=service.removeById(10);
+		System.out.println(service.getById(10000001));
+		
+		//System.out.println(b);
 
 	}
 

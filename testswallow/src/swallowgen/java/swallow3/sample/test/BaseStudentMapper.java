@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.io.Serializable;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -28,4 +29,12 @@ public interface BaseStudentMapper extends BaseMapper<Student> {
   )
   IPage<Student> findAllItemByPage(Page<Student> page,
       @Param(Constants.WRAPPER) Wrapper<Student> Wrapper);
+
+  /**
+   * 根据ID查询Student数据 */
+  @SelectProvider(
+      type = BaseStudentMapperSql.class,
+      method = "findItemById"
+  )
+  Student findItemById(@Param("id") Serializable id);
 }

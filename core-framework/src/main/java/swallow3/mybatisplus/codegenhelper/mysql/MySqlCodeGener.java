@@ -5,31 +5,24 @@ package swallow3.mybatisplus.codegenhelper.mysql;
 
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.Serializable;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.Filer;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
-import javax.tools.JavaFileObject;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -43,8 +36,11 @@ import com.squareup.javapoet.TypeSpec;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+import swallow3.mybatisplus.SwallowService;
 import swallow3.mybatisplus.codegenhelper.Config;
 import swallow3.mybatisplus.codegenhelper.TableFieldInfo;
 import swallow3.mybatisplus.codegenhelper.TableInfo;
@@ -67,6 +63,9 @@ public class MySqlCodeGener implements ICodeGener {
         this.writeBaseMapperClass(tableInfo, config.getGenCodeDir(), filer);
         // 3 生成查询类
         this.writeMapperClass(tableInfo, config.getCodeDir(), filer);
+
+        //4 生成service类
+        this.writeServiceClass(tableInfo, config.getCodeDir(), filer);
 
     }
 
@@ -169,6 +168,7 @@ public class MySqlCodeGener implements ICodeGener {
 
     private final String method_findAllItem = "findAllItem";
     private final String method_findAllItemByPage = "findAllItemByPage";
+    private final String method_findItemById="findItemById";
 
     /**
      * 生成基础类
@@ -182,6 +182,8 @@ public class MySqlCodeGener implements ICodeGener {
                 .addMember("type", mapperName + "Sql.class").addMember("method", "$S", method_findAllItem);
         AnnotationSpec.Builder selectAnnFindAllByPage = AnnotationSpec.builder(SelectProvider.class)
                 .addMember("type", mapperName + "Sql.class").addMember("method", "$S", method_findAllItemByPage);
+        AnnotationSpec.Builder selectAnnFindItemById = AnnotationSpec.builder(SelectProvider.class)
+                .addMember("type", mapperName + "Sql.class").addMember("method", "$S", method_findItemById);
 
         // 添加类主体
         TypeSpec.Builder builder = TypeSpec.interfaceBuilder(mapperName)
@@ -222,8 +224,22 @@ public class MySqlCodeGener implements ICodeGener {
                         "page").build())
                 .addParameter(param.build());
 
+        MethodSpec.Builder methodFindItemById=MethodSpec.methodBuilder(method_findItemById);
+                methodFindItemById.addJavadoc("根据ID查询$L数据", tableInfo.getEntityName()).addModifiers(Modifier.PUBLIC)
+                        .addAnnotation(selectAnnFindItemById.build())
+                         .returns(TypeName.get(tableInfo.getRawClassInfo()))
+                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                         .addParameter(ParameterSpec.builder(
+                                   ClassName.get(Serializable.class)     
+                                   ,"id")
+                                   .addAnnotation(AnnotationSpec.builder(Param.class)
+                                        .addMember("value", "$S","id").build()
+                                   )                           
+                                   .build());
+
         builder.addMethod(methodFindAll.build());
         builder.addMethod(methodFindAllByPage.build());
+        builder.addMethod(methodFindItemById.build());
 
         // 写入文件到生成目录下
         JavaFile javaFile = JavaFile.builder(tableInfo.getEntityPacketName(), builder.build()).build();
@@ -274,9 +290,27 @@ public class MySqlCodeGener implements ICodeGener {
                         ParameterizedTypeName.get(ClassName.get(Page.class), TypeName.get(tableInfo.getRawClassInfo())),
                         "page").build())
                 .addParameter(param.build())
-                .addStatement("return $S+SELECTLIST+$S+FROMLIST+$S", "Select ", " Form ", " ${ew.customSqlSegment}");
+                .addStatement("return $S+SELECTLIST+$S+FROMLIST+$S", "Select ", " From ", " ${ew.customSqlSegment}");
+        
+        // 通过ID取得实体对象
+        MethodSpec.Builder methodFindItemById=MethodSpec.methodBuilder(method_findItemById);
+        methodFindItemById.addJavadoc("根据ID查询$L数据", tableInfo.getEntityName()).addModifiers(Modifier.PUBLIC)
+                 .returns(ClassName.get(String.class))
+                 .addParameter(ParameterSpec.builder(
+                           ClassName.get(Serializable.class)     
+                           ,"id")
+                           .addAnnotation(AnnotationSpec.builder(Param.class)
+                                .addMember("value", "$S","id").build()
+                           )                           
+                           .build())
+                
+                .addStatement("return $S+SELECTLIST+$S+FROMLIST+$S", "Select ", " From ", 
+                        String.format(" where %s.%s=${id}", tableInfo.getAliasName(),tableInfo.getPrimaryKey()));
+
+
         builder.addMethod(methodFindAll.build());
         builder.addMethod(methodFindAllByPage.build());
+        builder.addMethod(methodFindItemById.build());
 
         // 写入文件到生成目录下
         JavaFile javaFile = JavaFile.builder(tableInfo.getEntityPacketName(), builder.build()).build();
@@ -320,6 +354,56 @@ public class MySqlCodeGener implements ICodeGener {
         
         // 如果原来类存在则不保存
         javaFile.writeTo(Paths.get(pathDir)); 
+    }
+
+    /**
+     * 生成服务类
+     */
+    private void writeServiceClass(TableInfo tableInfo, String pathDir, Filer filer) throws IOException {
+        String serviceName = String.format("%sService", tableInfo.getEntityName());
+        String baseServiceName = String.format("Base%sService", tableInfo.getEntityName());
+        String mapperName = String.format("%sMapper", tableInfo.getEntityName());
+
+        String classFilePath=Paths.get(pathDir,tableInfo.getEntityPacketName().replaceAll("\\.", "/"),serviceName+".java").toString();
+        
+        File file =Paths.get(pathDir,tableInfo.getEntityPacketName().replaceAll("\\.", "/"),serviceName+".java").toFile();
+        // 原来代码已经存在，不再生成
+        if(file.exists()) return ;    
+
+        TypeSpec.Builder builder = TypeSpec.classBuilder(serviceName).addJavadoc(
+                "实体$L.$L对应的Service对象,下次生成时不会被覆盖", tableInfo.getEntityPacketName(),
+                tableInfo.getEntityName())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(AnnotationSpec.builder(Slf4j.class).build())
+                .addAnnotation(AnnotationSpec.builder(Service.class).build())                
+                .superclass(ParameterizedTypeName.get(ClassName.get(SwallowService.class), ClassName.get(tableInfo.getEntityPacketName(), mapperName),
+                        ClassName.get(tableInfo.getEntityPacketName(), tableInfo.getEntityName())
+                        )
+                )
+                ;
+        
+        MethodSpec.Builder methodGetItemById=MethodSpec.methodBuilder("getById").addJavadoc("取得id对应的$L信息",
+                tableInfo.getEntityName())
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(AnnotationSpec.builder(Override.class).build())
+                .returns(TypeName.get(tableInfo.getRawClassInfo()))
+                .addParameter(ParameterSpec.builder(
+                        ClassName.get(Serializable.class)     
+                        ,"id").build())
+                .addCode("return this.baseMapper.findItemById(id);");   
+                
+        builder.addMethod(methodGetItemById.build());
+
+         // 写入文件到生成目录下
+         JavaFile javaFile=JavaFile.builder(tableInfo.getEntityPacketName(), builder.build())       
+                                            
+         .build();
+ 
+        // 先把类放入编译器
+        javaFile.writeTo(filer);        
+ 
+        // 如果原来类存在则不保存
+        javaFile.writeTo(Paths.get(pathDir));                 
     }
 
 

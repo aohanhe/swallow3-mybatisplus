@@ -133,7 +133,7 @@ public class LoadTableInfoHelper {
 
             // 确定字段是不是主键
             if(field.getAnnotation(TableId.class)!=null){
-                fieldInfo.setPrimaryKey(true);
+                fieldInfo.setPrimaryKey(true);                
             }
             // 检查是否为快照数据
             fieldInfo.setTransient(field.getModifiers().contains(Modifier.TRANSIENT));
@@ -153,6 +153,11 @@ public class LoadTableInfoHelper {
             // 设置字段的别名
             if (tableField != null && StringUtils.hasText(tableField.value())) {
                 fieldInfo.setFieldAliasName(tableField.value());
+            }
+
+            // 如果字段为主键则更新表信息的主键数据
+            if(fieldInfo.isPrimaryKey()){
+                tableInfo.setPrimaryKey(fieldInfo.getFieldAliasName());
             }
 
             Assert.hasText(tableFieldName, String.format("字段 %s 同时没有设置@SwallowField的fieldName与@TableField的value", name));

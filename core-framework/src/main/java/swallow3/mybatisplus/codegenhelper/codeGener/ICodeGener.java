@@ -25,6 +25,8 @@ public interface ICodeGener {
      */
     void genCreateTableSql(TableInfo tableInfo,Config config) throws IOException;
 
+    
+
     /**
      * 通过表定义生成查询助手
      * @param tableInfo
