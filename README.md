@@ -26,6 +26,9 @@
 </tr>
 <tr>
 	<td>aliasName:  <strong>String</strong>- 实体使用对应的表使用的别名</td>
+	
+</tr>
+<tr>
 	<td>tableName:  <strong>String</strong>- 实体使用对应的表使用的名称，如果没有设置使用@TableName的设置</td>
 </tr>
 <tr>

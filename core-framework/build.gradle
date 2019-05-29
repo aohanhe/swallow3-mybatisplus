@@ -21,6 +21,7 @@ sourceSets {
 compileJava.options.encoding = 'UTF-8'
 
 dependencies {
+   //implementation 'com.baomidou:dynamic-datasource-spring-boot-starter:2.5.4'
    implementation 'com.baomidou:mybatis-plus-boot-starter:3.1.1'
    compile 'com.squareup:javapoet:1.11.1' //javapoet代码生成框架       
    compileOnly 'org.projectlombok:lombok:1.18.8'	

@@ -1,8 +1,8 @@
 package swallow3.sample.test;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.io.Serializable;
 import java.lang.String;
 import org.apache.ibatis.annotations.Param;
@@ -22,7 +22,7 @@ public class BaseStudentMapperSql {
 
   /**
    * 根据条件查询所有的Student数据 */
-  public String findAllItemByPage(Page<Student> page,
+  public String findAllItemByPage(IPage<Student> page,
       @Param(Constants.WRAPPER) Wrapper<Student> Wrapper) {
     return "Select "+SELECTLIST+" From "+FROMLIST+" ${ew.customSqlSegment}";
   }

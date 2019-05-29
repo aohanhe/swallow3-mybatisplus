@@ -7,11 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+
 /**
  * SwallowService 在mybatis的serviceImpl基础上添加了事务以及日志
  */
-public class SwallowService<M extends BaseMapper<T>, T> extends ServiceImpl<M,T>{
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+public class SwallowService<M extends ISwallowMapper<T>, T> extends ServiceImpl<M,T>{
 
     @Autowired(required = false)
     protected IEntityEventLog eventLog;
@@ -25,7 +28,7 @@ public class SwallowService<M extends BaseMapper<T>, T> extends ServiceImpl<M,T>
             if(this.eventLog!=null) eventLog.onEntitySave(entity);
             return re;
         } catch (Exception e) {
-            String strMsg=String.format("保存Student(%s)对象时出错:",entity.toString())+e.getMessage();
+            String strMsg=String.format("保存实体(%s)对象时出错:",entity.toString())+e.getMessage();
             log.error(strMsg, e);
             throw new RuntimeException(strMsg, e);
         }        
@@ -39,7 +42,7 @@ public class SwallowService<M extends BaseMapper<T>, T> extends ServiceImpl<M,T>
             if(this.eventLog!=null) eventLog.onEntityUpdate(entity);
             return re;
         } catch (Exception e) {
-            String strMsg=String.format("删除Student(%s)对象时出错:",entity.toString())+e.getMessage();
+            String strMsg=String.format("删除实体(%s)对象时出错:",entity.toString())+e.getMessage();
             log.error(strMsg, e);
             throw new RuntimeException(strMsg, e);
         }  
@@ -54,10 +57,20 @@ public class SwallowService<M extends BaseMapper<T>, T> extends ServiceImpl<M,T>
             if(this.eventLog!=null) eventLog.onEntityDel(id);
             return re;
         } catch (Exception e) {
-            String strMsg=String.format("删除Student(id=%d)对象时出错:",id)+e.getMessage();
+            String strMsg=String.format("删除实体(id=%d)对象时出错:",id)+e.getMessage();
             log.error(strMsg, e);
             throw new RuntimeException(strMsg, e);
         }    
     }
+
     
+    @Override
+    public IPage<T> page(IPage<T> page) {
+        return getBaseMapper().findAllItemByPage(page, Wrappers.emptyWrapper());
+    }
+
+    @Override
+    public IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper) {
+        return getBaseMapper().findAllItemByPage(page,queryWrapper);
+    }
 }

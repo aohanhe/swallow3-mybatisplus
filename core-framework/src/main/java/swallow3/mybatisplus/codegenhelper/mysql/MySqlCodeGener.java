@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import swallow3.mybatisplus.ISwallowMapper;
 import swallow3.mybatisplus.SwallowService;
 import swallow3.mybatisplus.codegenhelper.Config;
 import swallow3.mybatisplus.codegenhelper.TableFieldInfo;
@@ -190,7 +191,7 @@ public class MySqlCodeGener implements ICodeGener {
                 .addJavadoc(String.format("实体%s.%s对应的基础mybatis的mapper对象,请不要在这里添加代码，以防止下次生成时被覆盖",
                         tableInfo.getEntityPacketName(), tableInfo.getEntityName()))
                 .addModifiers(Modifier.PUBLIC).addSuperinterface(ParameterizedTypeName
-                        .get(ClassName.get(BaseMapper.class), TypeName.get(tableInfo.getRawClassInfo())));
+                        .get(ClassName.get(ISwallowMapper.class), TypeName.get(tableInfo.getRawClassInfo())));
 
         // 添加标准查询方法
         MethodSpec.Builder methodFindAll = MethodSpec.methodBuilder(method_findAllItem);
@@ -220,7 +221,7 @@ public class MySqlCodeGener implements ICodeGener {
                 .returns(ParameterizedTypeName.get(ClassName.get(IPage.class),
                         TypeName.get(tableInfo.getRawClassInfo())))
                 .addParameter(ParameterSpec.builder(
-                        ParameterizedTypeName.get(ClassName.get(Page.class), TypeName.get(tableInfo.getRawClassInfo())),
+                        ParameterizedTypeName.get(ClassName.get(IPage.class), TypeName.get(tableInfo.getRawClassInfo())),
                         "page").build())
                 .addParameter(param.build());
 
@@ -287,7 +288,7 @@ public class MySqlCodeGener implements ICodeGener {
         methodFindAllByPage.addJavadoc("根据条件查询所有的$L数据", tableInfo.getEntityName()).addModifiers(Modifier.PUBLIC)
                 .returns(ClassName.get(String.class))
                 .addParameter(ParameterSpec.builder(
-                        ParameterizedTypeName.get(ClassName.get(Page.class), TypeName.get(tableInfo.getRawClassInfo())),
+                        ParameterizedTypeName.get(ClassName.get(IPage.class), TypeName.get(tableInfo.getRawClassInfo())),
                         "page").build())
                 .addParameter(param.build())
                 .addStatement("return $S+SELECTLIST+$S+FROMLIST+$S", "Select ", " From ", " ${ew.customSqlSegment}");

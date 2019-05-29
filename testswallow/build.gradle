@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
 	compile project(":core-framework")
-	 
+	//implementation 'com.baomidou:dynamic-datasource-spring-boot-starter:2.5.4'
 	implementation 'com.baomidou:mybatis-plus-boot-starter:3.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	compileOnly 'org.projectlombok:lombok'
