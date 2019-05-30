@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 
@@ -72,5 +73,10 @@ public class SwallowService<M extends ISwallowMapper<T>, T> extends ServiceImpl<
     @Override
     public IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper) {
         return getBaseMapper().findAllItemByPage(page,queryWrapper);
+    }
+
+    @Override
+    public List<T> list(Wrapper<T> queryWrapper) {
+        return getBaseMapper().findAllItem(queryWrapper);
     }
 }

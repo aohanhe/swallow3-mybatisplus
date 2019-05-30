@@ -1,7 +1,9 @@
 package swallow3.sample.test;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +39,9 @@ public class DemoApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		
 		//boolean b=service.removeById(10);
-		System.out.println(service.getById(10000001));
-		
+		//System.out.println(service.getById(10000001));
+		service.list().forEach(System.out::println);
+
 		
 		//System.out.println(b);
 
