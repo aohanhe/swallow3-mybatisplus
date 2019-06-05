@@ -114,7 +114,7 @@ public class MySqlCodeGener implements ICodeGener {
         for(TableFieldInfo fieldInfo:tableInfo.getFields()){
             builder.addField(FieldSpec.builder(String.class, fieldInfo.getName(), 
                 Modifier.PUBLIC,Modifier.FINAL,Modifier.STATIC)
-                .initializer("$S", String.format("%s.%s", fieldInfo.getTableAliasName(),fieldInfo.getFieldAliasName()))
+                .initializer("$S", String.format("%s.%s",fieldInfo.getTableAliasName(), fieldInfo.getFieldName()))
                 .build());    
         }
         JavaFile javaFile = JavaFile.builder(tableInfo.getEntityPacketName(), builder.build()).build();

@@ -1,5 +1,6 @@
 package swallow3.sample.test;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -29,6 +30,8 @@ public class DemoApplication implements CommandLineRunner{
 		return new PaginationInterceptor();
 	}
 
+	
+
 	@Autowired
 	private StudentMapper mpp;
 	
@@ -37,12 +40,15 @@ public class DemoApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		
-		//boolean b=service.removeById(10);
-		//System.out.println(service.getById(10000001));
-		service.list().forEach(System.out::println);
+		QueryWrapper<Student> query= Wrappers.<Student>query()
+			.gt(StudentMeta.id, 2)
+			.or()
+			.isNotNull(StudentMeta.className);
 
 		
+		service.list(query).forEach(System.out::println);
+
+		service.page(new Page(1,10));
 		//System.out.println(b);
 
 	}
